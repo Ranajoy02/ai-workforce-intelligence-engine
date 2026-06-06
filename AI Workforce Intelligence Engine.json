@@ -1,0 +1,532 @@
+{
+  "name": "AI Workforce Intelligence Engine",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2e21f3f5-e1a4-4d1c-8fb4-eaf33e1dd6e5",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "duplicateItem": true,
+        "duplicateCount": 4,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "signal",
+              "name": "signal",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9ab14afb-0774-4fe3-8a9c-ace9613bbb28",
+      "name": "Create Sample Founder Signals",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a comprehensive AI Workforce Audit based on the following analysis:\n\nFounder Signal: {{ $json.founder_signal }}\nPain Category: {{ $json.pain_category }}\nAI Employee Fit: {{ $json.ai_employee_fit }}\nMonthly Hours Saved: {{ $json.hours_saved }}\nMonthly Cost Savings: ${{ $json.cost_savings }}\nLead Score: {{ $json.lead_score }}\nReasoning: {{ $json.reasoning }}\n\nCreate a detailed audit containing:\n1. Executive Summary\n2. Pain Analysis\n3. Recommended AI Employee\n4. Estimated Monthly Savings\n5. Estimated Annual Savings (Monthly × 12)\n6. Implementation Roadmap\n7. ROI Summary\n\nFormat the audit professionally with clear sections and actionable insights.",
+        "options": {
+          "systemMessage": "You are an AI Workforce Audit Specialist. Generate comprehensive, professional audits that demonstrate ROI and implementation roadmaps for AI Employee solutions."
+        }
+      },
+      "id": "ac407be6-ec9e-496d-98a9-5b8610195c74",
+      "name": "Generate AI Workforce Audit",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "85cbb964-f72a-4e33-930e-6b0331ec8979",
+      "name": "OpenAI Model for Audit",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        992,
+        432
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7HfCPQUyTcs6zy8S",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "founder_signal",
+              "name": "founder_signal",
+              "value": "={{ $(\"Store Classification Results\").item.json.founder_signal }}",
+              "type": "string"
+            },
+            {
+              "id": "pain_category",
+              "name": "pain_category",
+              "value": "={{ $(\"Store Classification Results\").item.json.pain_category }}",
+              "type": "string"
+            },
+            {
+              "id": "ai_employee_fit",
+              "name": "ai_employee_fit",
+              "value": "={{ $(\"Store Classification Results\").item.json.ai_employee_fit }}",
+              "type": "string"
+            },
+            {
+              "id": "hours_saved",
+              "name": "hours_saved",
+              "value": "={{ $(\"Store Classification Results\").item.json.hours_saved }}",
+              "type": "string"
+            },
+            {
+              "id": "cost_savings",
+              "name": "cost_savings",
+              "value": "={{ $(\"Store Classification Results\").item.json.cost_savings }}",
+              "type": "string"
+            },
+            {
+              "id": "lead_score",
+              "name": "lead_score",
+              "value": "={{ $(\"Store Classification Results\").item.json.lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "reasoning",
+              "name": "reasoning",
+              "value": "={{ $(\"Store Classification Results\").item.json.reasoning }}",
+              "type": "string"
+            },
+            {
+              "id": "workforce_audit",
+              "name": "workforce_audit",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ebc149a-6a78-4647-a562-841a29261d8a",
+      "name": "Combine Audit with Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1264,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "report_title",
+              "name": "report_title",
+              "value": "AI Workforce Intelligence Report",
+              "type": "string"
+            },
+            {
+              "id": "founder_signal",
+              "name": "founder_signal",
+              "value": "={{ $json.founder_signal }}",
+              "type": "string"
+            },
+            {
+              "id": "pain_category",
+              "name": "pain_category",
+              "value": "={{ $json.pain_category }}",
+              "type": "string"
+            },
+            {
+              "id": "ai_employee_recommendation",
+              "name": "ai_employee_recommendation",
+              "value": "={{ $json.ai_employee_fit }}",
+              "type": "string"
+            },
+            {
+              "id": "lead_score",
+              "name": "lead_score",
+              "value": "={{ $json.lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "monthly_savings",
+              "name": "monthly_savings",
+              "value": "={{ $json.estimated_savings }}",
+              "type": "string"
+            },
+            {
+              "id": "workforce_audit",
+              "name": "workforce_audit",
+              "value": "={{ $json.audit_summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6eb8ef9a-b1d4-4529-a637-1da0b13554bd",
+      "name": "Final Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1712,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the founder signal provided.\n\nDetermine:\n* Pain Category\n* AI Employee Fit\n* Estimated Monthly Hours Saved\n* Estimated Monthly Cost Savings\n* Lead Score (1-100)\n* Reasoning\n\nPain Categories:\n* Sales\n* Recruiting\n* Customer Support\n* Operations\n* Research\n* Marketing\n\nAI Employee Types:\n* AI SDR\n* AI Recruiter\n* AI Support Agent\n* AI Operations Assistant\n* AI Research Assistant\n* AI Marketing Assistant\n\nFounder Signal: {{ $json.signal }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI Workforce Intelligence Analyst. Analyze founder pain signals and classify them into appropriate AI Employee opportunities with detailed metrics."
+        }
+      },
+      "id": "4feec226-0bf3-42f3-913d-5710b5e0450d",
+      "name": "Classify Founder Signal",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "f6984247-e8e1-450b-b051-340c12263a68",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        928,
+        944
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "7HfCPQUyTcs6zy8S",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"pain_category\":\"Sales\",\"ai_employee_fit\":\"AI SDR\",\"hours_saved\":\"120\",\"cost_savings\":\"6000\",\"lead_score\":\"85\",\"reasoning\":\"Analysis of the pain signal\"}"
+      },
+      "id": "c2c5bded-d221-4d01-a17c-351e92844839",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "founder_signal",
+              "name": "founder_signal",
+              "value": "={{ $(\"Create Sample Founder Signals\").item.json.signal }}",
+              "type": "string"
+            },
+            {
+              "id": "pain_category",
+              "name": "pain_category",
+              "value": "={{ $json.pain_category }}",
+              "type": "string"
+            },
+            {
+              "id": "ai_employee_fit",
+              "name": "ai_employee_fit",
+              "value": "={{ $json.ai_employee_fit }}",
+              "type": "string"
+            },
+            {
+              "id": "hours_saved",
+              "name": "hours_saved",
+              "value": "={{ $json.hours_saved }}",
+              "type": "string"
+            },
+            {
+              "id": "cost_savings",
+              "name": "cost_savings",
+              "value": "={{ $json.cost_savings }}",
+              "type": "string"
+            },
+            {
+              "id": "lead_score",
+              "name": "lead_score",
+              "value": "={{ $json.lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "reasoning",
+              "name": "reasoning",
+              "value": "={{ $json.reasoning }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea01ffe4-2776-431a-8714-b5edac768807",
+      "name": "Store Classification Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1264,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c4fdde4c-1c9f-41f8-aaff-aa42985f52a7",
+      "name": "Loop Over Signals",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        688,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "founder_signal",
+              "name": "founder_signal",
+              "value": "={{ $json.founder_signal }}",
+              "type": "string"
+            },
+            {
+              "id": "pain_category",
+              "name": "pain_category",
+              "value": "={{ $json.pain_category }}",
+              "type": "string"
+            },
+            {
+              "id": "ai_employee_fit",
+              "name": "ai_employee_fit",
+              "value": "={{ $json.ai_employee_fit }}",
+              "type": "string"
+            },
+            {
+              "id": "lead_score",
+              "name": "lead_score",
+              "value": "={{ $json.lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "estimated_savings",
+              "name": "estimated_savings",
+              "value": "=${{ $json.cost_savings }}",
+              "type": "string"
+            },
+            {
+              "id": "audit_summary",
+              "name": "audit_summary",
+              "value": "={{ $json.workforce_audit }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "08537466-19c2-47f7-bdf2-44a5dc74ca40",
+      "name": "Workforce Intelligence Database",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create Sample Founder Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sample Founder Signals": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Workforce Audit": {
+      "main": [
+        [
+          {
+            "node": "Combine Audit with Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model for Audit": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate AI Workforce Audit",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Audit with Data": {
+      "main": [
+        [
+          {
+            "node": "Workforce Intelligence Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Founder Signal": {
+      "main": [
+        [
+          {
+            "node": "Store Classification Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Founder Signal",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Classify Founder Signal",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Classification Results": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Signals": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Workforce Audit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classify Founder Signal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workforce Intelligence Database": {
+      "main": [
+        [
+          {
+            "node": "Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "691f068d-e7e4-4884-8601-9b19f3b16182",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5cbece02f6b10b7c8ce0407f82e3ce699745c1e6e21d3d52f2606a836267dbd8"
+  },
+  "nodeGroups": [],
+  "id": "uKt6353jW6LLddr2",
+  "tags": []
+}
